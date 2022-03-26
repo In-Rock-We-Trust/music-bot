@@ -133,5 +133,40 @@ class Music(commands.Cog):
         mbed = discord.Embed(title=f"Changed Volume to {to}", color=discord.Color.from_rgb(255, 255, 255))
         await ctx.send(embed=mbed)
 
+    @commands.command(name="queue")
+    async def queue_command(self, ctx: commands.Context):
+        node = wavelink.NodePool.get_node()
+        player = node.get_player(ctx.guild)
+
+        if player is None:
+            return await ctx.send("Bot is not connected to any voice channel")
+        
+        if not player.queue.qsize():
+            return await ctx.send("Queue is empty")
+        
+        queue = player.queue._queue
+        queue_list = []
+
+        for track in queue:
+            queue_list.append(track.title)
+
+        mbed = discord.Embed(title="Queue", description="\n".join(queue_list), color=discord.Color.from_rgb(255, 255, 255))
+        await ctx.send(embed=mbed)    
+
+    @commands.command(name="skip")
+    async def skip_command(self, ctx: commands.Context):
+        node = wavelink.NodePool.get_node()
+        player = node.get_player(ctx.guild)
+
+        if player is None:
+            return await ctx.send("Bot is not connected to any voice channel")
+        
+        if not player.is_playing():
+            return await ctx.send("Nothing is playing right now")
+
+        await player.stop()
+        mbed = discord.Embed(title="Playback Skipped", color=discord.Color.from_rgb(255, 255, 255))
+        await ctx.send(embed=mbed)
+
 def setup(client):
     client.add_cog(Music(client))

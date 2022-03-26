@@ -18,7 +18,7 @@ logging.basicConfig(level=logging.INFO, format="(%(asctime)s) %(levelname)s %(me
 log.propagate = False
 
 if not os.getenv("BOT_TOKEN"):
-    log.error("You forgot the")
+    log.error("You forgot the token")
     exit(1)
 
 bot = commands.Bot(command_prefix=when_mentioned_or("$"), intents=discord.Intents.all())
